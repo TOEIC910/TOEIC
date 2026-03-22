@@ -1,0 +1,220 @@
+/* 기본 폰트 및 변수 설정 */
+:root { 
+    --bg: #121212; 
+    --card: #1e1e1e; 
+    --text: #e0e0e0; 
+    --primary: #3b5bdb; 
+    --secondary: #2b8a3e; 
+    --accent: #ffd43b; 
+    --error: #c92a2a; 
+    --locked: #444; 
+    --shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+/* 전체 배경 및 폰트 */
+body { 
+    font-family: 'Pretendard', 'Segoe UI', system-ui, sans-serif; 
+    margin: 0; 
+    background: var(--bg); 
+    color: var(--text); 
+    display: flex; 
+    justify-content: center; 
+    min-height: 100vh; 
+    line-height: 1.6;
+}
+
+.container { width: 100%; max-width: 680px; padding: 20px; box-sizing: border-box; }
+
+/* 카드 스타일 */
+.card { 
+    background: var(--card); 
+    padding: 35px 25px; 
+    border-radius: 20px; 
+    box-shadow: var(--shadow); 
+    text-align: center; 
+    position: relative;
+    border: 1px solid #333;
+}
+
+/* 뷰 전환 애니메이션 */
+.view { display: none; }
+.active-view { display: block; animation: fadeInUp 0.4s ease-out; }
+
+@keyframes fadeInUp { 
+    from { opacity: 0; transform: translateY(15px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+/* 타이머 바 고도화 */
+.timer-container { 
+    width: 100%; 
+    height: 10px; 
+    background: #2a2a2a; 
+    border-radius: 10px; 
+    margin-bottom: 25px; 
+    overflow: hidden; 
+}
+
+#timer-bar { 
+    width: 0%; 
+    height: 100%; 
+    background: linear-gradient(90deg, #2b8a3e, #ffd43b, #c92a2a); 
+    transition: width 0.1s linear; 
+}
+
+/* 일시정지 오버레이 */
+#pause-overlay { 
+    position: absolute; 
+    top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(18, 18, 18, 0.98); 
+    border-radius: 20px; 
+    display: none; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 100; 
+}
+
+/* 상단 스탯 창 */
+.stats { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 12px; 
+    margin-bottom: 20px; 
+    background: #252525; 
+    padding: 18px; 
+    border-radius: 12px; 
+    border: 1px solid #333;
+}
+
+.stats div { font-weight: 700; font-size: 0.95em; color: #bbb; }
+.stats span { color: var(--accent); font-size: 1.1em; }
+
+/* 버튼 공통 스타일 */
+.btn { 
+    display: block; 
+    width: 100%; 
+    padding: 18px; 
+    margin: 10px 0; 
+    border: none; 
+    border-radius: 10px; 
+    font-size: 16px; 
+    font-weight: 700; 
+    cursor: pointer; 
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+    color: white; 
+    background: var(--primary); 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.btn:active { transform: scale(0.98); box-shadow: none; }
+.btn:hover { opacity: 0.9; filter: brightness(1.1); }
+
+/* 특수 버튼 색상 */
+.main-start-btn { padding: 25px; font-size: 22px; background: linear-gradient(135deg, #3b5bdb, #5c7cfa); margin-bottom: 15px; }
+.main-sub-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.btn-voca { background: #495057; }
+.btn-review { background: #343a40; }
+.btn-reset { background: transparent; border: 1px solid #444; color: #888; font-size: 12px; margin-top: 20px; }
+.btn-back, .btn-quit { background: #444; margin-top: 15px; }
+.btn-normal { background: #228be6; }
+.btn-hard { background: #e03131; }
+.btn-pause { background: #fab005; color: #000; flex: 1; }
+.btn-quit { flex: 1; margin: 0; }
+.btn-next { background: #2f9e44; margin-top: 20px; border: 2px solid rgba(255,255,255,0.1); }
+
+/* 차수 선택 그리드 */
+.day-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 25px; }
+.day-btn { 
+    padding: 15px 5px; 
+    border-radius: 10px; 
+    border: 1px solid #444; 
+    background: #2a2a2a; 
+    color: white; 
+    font-weight: 700; 
+    cursor: pointer; 
+    transition: 0.2s;
+}
+.day-btn:hover { background: var(--primary); border-color: var(--primary); }
+.day-btn.locked { background: #1a1a1a; color: #555; cursor: not-allowed; opacity: 0.6; }
+
+/* 퀴즈 옵션(선택지) */
+.option { 
+    display: block; 
+    width: 100%; 
+    padding: 18px; 
+    margin: 12px 0; 
+    text-align: left; 
+    background: #2a2a2a; 
+    border: 2px solid #333; 
+    color: var(--text); 
+    border-radius: 12px; 
+    cursor: pointer; 
+    font-size: 17px; 
+    font-weight: 600; 
+    transition: 0.2s;
+}
+
+.option:hover:not(:disabled) { background: #333; border-color: #555; }
+.option.correct { background: #1b5e20 !important; border-color: #4caf50 !important; color: #a5d6a7 !important; }
+.option.incorrect { background: #b71c1c !important; border-color: #f44336 !important; color: #ef9a9a !important; }
+
+/* 텍스트 영역 */
+.q-text { 
+    font-size: 1.2em; 
+    text-align: left; 
+    margin: 20px 0 30px 0; 
+    line-height: 1.7; 
+    font-weight: 700; 
+    color: #fff; 
+    background: #181818;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 5px solid var(--accent);
+}
+
+.explanation { 
+    margin-top: 20px; 
+    padding: 18px; 
+    background: #1a1a1a; 
+    border-radius: 10px;
+    border: 1px solid #333;
+    text-align: left; 
+    display: none; 
+}
+
+/* 리스트 및 스크롤 */
+.scroll-area { max-height: 450px; overflow-y: auto; padding-right: 8px; margin: 20px 0; }
+.scroll-area::-webkit-scrollbar { width: 6px; }
+.scroll-area::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+
+.list-item { 
+    background: #252525; 
+    padding: 20px; 
+    border-radius: 12px; 
+    margin-bottom: 12px; 
+    border-left: 4px solid var(--primary); 
+    text-align: left; 
+    position: relative;
+    border: 1px solid #333;
+}
+
+.del-btn { 
+    position: absolute; 
+    right: 15px; top: 15px; 
+    background: #333; 
+    color: #ff6b6b; 
+    border: 1px solid #444; 
+    border-radius: 6px; 
+    padding: 5px 10px; 
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* 기타 컨트롤 */
+.quiz-controls { display: flex; gap: 10px; margin-bottom: 20px; }
+.divider { border: 0; border-top: 1px solid #333; margin: 25px 0; }
+#test-progress { font-weight: 800; color: var(--accent); margin-bottom: 15px; letter-spacing: 1px; }
+
+h1 { font-size: 2.2em; font-weight: 900; letter-spacing: -1px; margin-bottom: 20px; color: #fff; }
+h2 { font-size: 1.6em; font-weight: 800; margin-bottom: 15px; }
