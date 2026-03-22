@@ -1,209 +1,66 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>TOEIC VOCA MASTER - 병진 커스텀 40 FINAL</title>
-<style>
-:root { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --primary: #3b5bdb; --secondary: #2b8a3e; --accent: #ffd43b; --error: #c92a2a; --locked: #444; }
-body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
-.container { width: 100%; max-width: 680px; padding: 15px; }
-.card { background: var(--card); padding: 30px; border-radius: 14px; box-shadow: 0 8px 25px rgba(0,0,0,0.5); text-align: center; position: relative; }
-.view { display: none; }
-.active-view { display: block; animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-.timer-container { width: 100%; height: 8px; background: #333; border-radius: 4px; margin-bottom: 20px; overflow: hidden; display: none; }
-#timer-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--secondary), var(--accent), var(--error)); transition: width 0.1s linear; }
-#pause-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); border-radius: 14px; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 10; }
-.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; background: #2a2a2a; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 1em; }
-.btn { display: block; width: 100%; padding: 16px; margin: 8px 0; border: none; border-radius: 7px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; color: white; background: var(--primary); }
-.btn:hover { opacity: 0.9; transform: scale(1.01); }
-.day-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; }
-.day-btn { padding: 15px 5px; border-radius: 8px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 14px; }
-.option { display: block; width: 100%; padding: 16px; margin: 10px 0; text-align: left; background: #2a2a2a; border: 1px solid #444; color: var(--text); border-radius: 7px; cursor: pointer; font-size: 16px; font-weight: bold; }
-.option.correct { background: #1b5e20 !important; border-color: #4caf50 !important; color: #a5d6a7 !important; }
-.option.incorrect { background: #b71c1c !important; border-color: #f44336 !important; color: #ef9a9a !important; }
-.explanation { margin-top: 20px; padding: 16px; background: #2a2a2a; border-left: 4px solid var(--primary); text-align: left; display: none; line-height: 1.5; font-weight: bold; font-size: 1em; }
-.q-text { font-size: 1.15em; text-align: left; margin-bottom: 25px; line-height: 1.6; font-weight: bold; color: #ffffff; white-space: pre-wrap; }
-.scroll-area { max-height: 400px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px; }
-.list-item { background: #2a2a2a; padding: 16px; border-radius: 7px; margin-bottom: 10px; border-left: 4px solid var(--primary); text-align: left; position: relative; }
-.del-btn { position: absolute; right: 12px; top: 12px; background: #444; color: #fff; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer; font-size: 12px; font-weight: bold; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC VOCA MASTER PRO - 병진 커스텀</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-    <div id="home" class="view active-view card">
-        <h1>TOEIC MASTER PRO</h1>
-        <div class="stats">
-            <div>누적 정답: <span id="stat-correct">0</span></div>
-            <div>누적 진행: <span id="stat-total">0</span></div>
+    <div class="container">
+        <div id="home" class="view active-view card">
+            <h1>TOEIC MASTER PRO</h1>
+            <div class="stats">
+                <div>누적 정답: <span id="stat-correct">0</span></div>
+                <div>누적 진행: <span id="stat-total">0</span></div>
+            </div>
+            <button class="btn main-start-btn" onclick="showDaySelect('quiz')">학습 시작하기</button>
+            <div class="main-sub-btns">
+                <button class="btn btn-voca" onclick="showDaySelect('voca')">단어장</button>
+                <button class="btn btn-review" onclick="showReview()">오답 노트</button>
+            </div>
+            <button class="btn btn-reset" onclick="resetAllProgress()">데이터 완전 초기화</button>
         </div>
-        <button class="btn" style="padding: 25px; font-size: 20px;" onclick="showDaySelect('quiz')">학습 시작하기</button>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <button class="btn" style="background:#666" onclick="showDaySelect('voca')">단어장</button>
-            <button class="btn" style="background:#444" onclick="showReview()">오답 노트</button>
+
+        <div id="day-select" class="view card">
+            <h2 id="day-select-title">학습 차수 선택</h2>
+            <div class="day-grid" id="day-buttons"></div>
+            <button class="btn btn-back" onclick="goHome()">뒤로가기</button>
         </div>
-        <button class="btn" style="background:#222; font-size: 12px; padding: 8px;" onclick="resetAllProgress()">데이터 완전 초기화</button>
-    </div>
 
-    <div id="day-select" class="view card">
-        <h2 id="day-select-title" style="font-weight: 900;">학습 차수 선택</h2>
-        <div class="day-grid" id="day-buttons"></div>
-        <button class="btn" style="margin-top: 20px; background:#444;" onclick="goHome()">뒤로가기</button>
-    </div>
-
-    <div id="mode-select" class="view card">
-        <h2 id="selected-day-title" style="font-weight: 900;">DAY 1</h2>
-        <button class="btn" onclick="startQuiz('easy')">EASY (10초)</button>
-        <button class="btn" style="background:#4dabf7" onclick="startQuiz('normal')">NORMAL (30초)</button>
-        <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
-        <button class="btn" style="background:var(--error)" onclick="startQuiz('hard')">💀 HARD (60초)</button>
-        <button class="btn" style="background:var(--error)" onclick="startTest()">🔥 실전 테스트 (HARD)</button>
-        <button class="btn" style="background:#444;" onclick="showDaySelect('quiz')">뒤로가기</button>
-    </div>
-
-    <div id="quiz" class="view card">
-        <div class="timer-container" id="timer-cont"><div id="timer-bar"></div></div>
-        <div id="pause-overlay"><h2 style="color:var(--accent)">PAUSED</h2><button class="btn" style="width:200px;" onclick="togglePause()">계속하기</button></div>
-        <div id="test-progress" style="font-weight: bold; color: var(--accent); margin-bottom: 10px; display: none;"></div>
-        <div style="display:flex; gap:8px; margin-bottom:20px;">
-            <button id="pause-btn" class="btn" style="margin:0; background:#f08c00; color:#000; padding: 12px;" onclick="togglePause()">일시정지</button>
-            <button class="btn" style="margin:0; background:#c92a2a; padding: 12px;" onclick="goHome()">그만하기</button>
+        <div id="mode-select" class="view card">
+            <h2 id="selected-day-title">DAY 1</h2>
+            <button class="btn" onclick="startQuiz('easy')">EASY (10초)</button>
+            <button class="btn btn-normal" onclick="startQuiz('normal')">NORMAL (30초)</button>
+            <hr class="divider">
+            <button class="btn btn-hard" onclick="startQuiz('hard')">💀 HARD (60초)</button>
+            <button class="btn btn-hard" onclick="startTest()">🔥 실전 테스트 (HARD)</button>
+            <button class="btn btn-back" onclick="showDaySelect('quiz')">뒤로가기</button>
         </div>
-        <div id="q-text" class="q-text"></div>
-        <div id="options"></div>
-        <div id="explanation" class="explanation"></div>
-        <button id="next-btn" class="btn" style="display:none; background: var(--secondary);" onclick="generateQuestion()">다음 문제 (Enter)</button>
+
+        <div id="quiz" class="view card">
+            <div class="timer-container" id="timer-cont"><div id="timer-bar"></div></div>
+            <div id="pause-overlay">
+                <h2>PAUSED</h2>
+                <button class="btn pause-continue" onclick="togglePause()">계속하기</button>
+            </div>
+            <div id="test-progress"></div>
+            <div class="quiz-controls">
+                <button id="pause-btn" class="btn btn-pause" onclick="togglePause()">일시정지</button>
+                <button class="btn btn-quit" onclick="goHome()">그만하기</button>
+            </div>
+            <div id="q-text" class="q-text"></div>
+            <div id="options"></div>
+            <div id="explanation" class="explanation"></div>
+            <button id="next-btn" class="btn btn-next" onclick="generateQuestion()">다음 문제 (Enter)</button>
+        </div>
+
+        <div id="list-view" class="view card">
+            <h2 id="list-title">리스트</h2>
+            <div id="list-content" class="scroll-area"></div>
+            <button id="list-back-btn" class="btn" onclick="goHome()">메인으로</button>
+        </div>
     </div>
-
-    <div id="list-view" class="view card">
-        <h2 id="list-title" style="font-weight: 900;">리스트</h2>
-        <div id="list-content" class="scroll-area"></div>
-        <button id="list-back-btn" class="btn" onclick="goHome()">메인으로</button>
-    </div>
-</div>
-
-<script>
-const dayData = {
-1: [
-{ w: "resume", m: "이력서", n: ["Submit your ___ to HR.|인사팀에 ___를 제출하세요.","Update your ___ regularly.|___를 정기적으로 업데이트하세요.","Attach a ___ to the mail.|메일에 ___를 첨부하세요.","Bring your ___ to the meeting.|회의에 ___를 가져오세요.","A digital ___ is preferred.|디지털 ___를 선호합니다.","Check for errors in your ___.|___의 오류를 확인하세요.","Review the ___ carefully.|___를 주의 깊게 검토하세요."], h: ["Despite his impressive ___, the hiring committee was skeptical about his long gaps in employment.|인상적인 ___에도 불구하고, 채용 위원회는 그의 긴 고용 공백에 대해 회의적이었습니다."] },
-{ w: "opening", m: "공석, 결원; 개장, 개시", n: ["There is a job ___.|일자리 ___이 있습니다.","Check the latest ___ list.|최신 ___ 목록을 확인하세요.","The store ___ is at 9 AM.|매장 ___은 오전 9시입니다.","Fill the ___ immediately.|___를 즉시 채우세요.","A new ___ in sales.|영업 부서의 새로운 ___.","Grand ___ ceremony tonight.|오늘 밤 그랜드 ___ 기념식.","We have no ___ currently.|현재 ___이 없습니다."], h: ["The Chief Financial Officer's sudden departure created a critical ___ that must be filled by a candidate with at least ten years of executive experience.|재무 이사의 갑작스러운 사임으로 인해 최소 10년의 임원 경력을 가진 후보자로 채워야 하는 중요한 ___이 생겼습니다."] },
-{ w: "applicant", m: "지원자, 신청자", n: ["The ___ is waiting.|그 ___가 기다리고 있습니다.","Review each ___'s profile.|각 ___의 프로필을 검토하세요.","We have 100 ___s.|___가 100명 있습니다.","The best ___ was hired.|가장 뛰어난 ___가 채용되었습니다.","Contact the next ___.|다음 ___에게 연락하세요.","Are you an ___ for this?|당신이 이것의 ___입니까?","The ___ submitted the form.|___가 양식을 제출했습니다."], h: ["Every ___ seeking a position in our software development department must undergo a rigorous technical assessment involving complex algorithm challenges.|우리 소프트웨어 개발 부서의 직책을 원하는 모든 ___는 복잡한 알고리즘 문제를 포함하는 엄격한 기술 평가를 거쳐야 합니다."] },
-{ w: "requirement", m: "필요조건, 요건", n: ["Meeting the ___ is hard.|___을 충족하는 것은 어렵습니다.","Basic ___ for the job.|직업을 위한 기본 ___.","Read the entry ___s.|입학 ___을 읽어보세요.","System ___ is high.|시스템 ___ 사양이 높습니다.","A mandatory ___ for all.|모두에게 의무적인 ___.","Check the legal ___s.|법적 ___을 확인하세요.","Visa ___s are strict.|비자 ___이 엄격합니다."], h: ["Maintaining a high level of confidentiality regarding client data is a fundamental ___ for all employees joining our legal advisory firm.|고객 데이터에 대한 높은 수준의 기밀을 유지하는 것은 우리 법률 자문 회사에 입사하는 모든 직원의 근본적인 ___입니다."] },
-{ w: "meet", m: "(필요, 요구 등을) 만족시키다", n: ["___ the deadline.|마감 기한을 ___하세요.","Does it ___ your needs?|그것이 당신의 요구를 ___하나요?","We strive to ___ standards.|표준을 ___하기 위해 노력합니다.","Try to ___ the quota.|할당량을 ___하도록 노력하세요.","The service failed to ___ it.|서비스가 그것을 ___하지 못했습니다.","___ the criteria.|기준을 ___하세요.","Hard to ___ expectations.|기대를 ___하기 어렵습니다."], h: ["To remain competitive in the global market, our manufacturing plants must continuously optimize their processes to ___ the ever-evolving quality control standards.|글로벌 시장에서 경쟁력을 유지하기 위해, 우리 제조 공장은 계속 진화하는 품질 관리 표준을 ___하기 위해 프로세스를 지속적으로 최적화해야 합니다."] },
-{ w: "qualified", m: "자격 있는, 적격의", n: ["She is highly ___.|그녀는 매우 ___입니다.","Find a ___ doctor.|___ 의사를 찾으세요.","Are you ___ for this?|이것에 ___이 있습니까?","Only ___ staff can enter.|___ 직원만 입장 가능합니다.","A ___ accountant is needed.|___ 회계사가 필요합니다.","Most ___ candidates applied.|가장 ___ 후보자들이 지원했습니다.","Check if they are ___.|그들이 ___인지 확인하세요."], h: ["The search committee is tasked with identifying a highly ___ individual who possesses both a PhD in Economics and extensive experience in international trade policy.|검색 위원회는 경제학 박사 학위와 국제 무역 정책 분야의 광범위한 경험을 모두 갖춘 매우 ___ 인물을 식별하는 임무를 맡았습니다."] },
-{ w: "candidate", m: "후보자, 지원자", n: ["The best ___ won.|최고의 ___가 이겼습니다.","Interview the final ___s.|최종 ___들을 면접하세요.","A strong ___ for the job.|직업에 대한 강력한 ___.","Who is the leading ___?|유력한 ___는 누구입니까?","The ___ is very polite.|그 ___는 매우 공손합니다.","We narrowed down the ___s.|___들을 좁혔습니다.","The internal ___ was picked.|내부 ___가 선택되었습니다."], h: ["After conducting three rounds of intensive interviews, the department head still found it difficult to select the most suitable ___ from the pool of finalists.|세 차례의 집중 면접을 실시한 후에도 부서장은 최종 후보자들 중에서 가장 적합한 ___를 선택하는 데 여전히 어려움을 느꼈습니다."] },
-{ w: "confidence", m: "확신, 자신; 신임", n: ["Have ___ in yourself.|자신에 대한 ___을 가지세요.","Market ___ is rising.|시장 ___이 상승하고 있습니다.","Build your self-___.|당신의 자아 ___을 쌓으세요.","He spoke with ___.|그는 ___ 있게 말했습니다.","Investors lost ___.|투자자들이 ___을 잃었습니다.","Full ___ in our team.|우리 팀에 대한 전적인 ___.","A matter of strict ___.|엄격한 ___에 대한 문제."], h: ["The CEO's transparent approach to addressing the recent financial losses was strategically designed to restore shareholder ___ and stabilize the company's fluctuating stock price.|최근의 재무 손실을 다루는 CEO의 투명한 접근 방식은 주주들의 ___을 회복하고 회사의 변동하는 주가를 안정시키기 위해 전략적으로 설계되었습니다."] },
-{ w: "highly", m: "매우, 대단히", n: ["It is ___ recommended.|그것은 ___ 추천됩니다.","A ___ skilled worker.|___ 숙련된 노동자.","___ effective results.|___ 효과적인 결과.","___ respected leader.|___ 존경받는 리더.","___ unlikely to happen.|일어날 가능성이 ___ 낮음.","The job is ___ complex.|일이 ___ 복잡합니다.","___ beneficial for us.|우리에게 ___ 유익합니다."], h: ["Given the current volatility of the energy sector, it is ___ probable that utility costs will continue to escalate throughout the upcoming fiscal year.|에너지 분야의 현재 변동성을 고려할 때, 다가오는 회계 연도 내내 유틸리티 비용이 계속 상승할 가능성이 ___ 높습니다."] },
-{ w: "professional", m: "전문적인, 전문가", n: ["Keep a ___ attitude.|___인 태도를 유지하세요.","Hire a ___ for this.|이것을 위해 ___를 고용하세요.","___ appearance is key.|___인 외모가 핵심입니다.","Give a ___ presentation.|___인 발표를 하세요.","Follow the ___ code.|___ 규정을 따르세요.","A ___ sports player.|___ 운동선수.","Ask for ___ advice.|___인 조언을 구하세요."], h: ["To cultivate a more collaborative and respectful work environment, the human resources department has implemented a new policy regarding ___ boundaries among staff members.|보다 협력적이고 존중하는 업무 환경을 조성하기 위해, 인사부는 직원들 간의 ___ 경계와 관련된 새로운 정책을 시행했습니다."] },
-{ w: "interview", m: "면접, 면접을 보다", n: ["Schedule an ___ today.|오늘 ___을 잡으세요.","How was your job ___?|취업 ___은 어땠나요?","The ___ was successful.|그 ___은 성공적이었습니다.","___ the new applicants.|새 지원자들을 ___하세요.","Wear a suit for the ___.|___을 위해 정장을 입으세요.","Prepare for the ___ questions.|___ 질문에 대비하세요.","The ___ lasted an hour.|___은 1시간 동안 지속되었습니다."], h: ["While the candidate's technical skills were exceptional, her inability to articulate long-term career goals during the final ___ led the panel to reconsider her suitability.|지원자의 기술적 능력은 뛰어났지만, 최종 ___ 동안 장기적인 경력 목표를 명확하게 설명하지 못한 점이 패널로 하여금 그녀의 적합성을 재고하게 만들었습니다."] },
-{ w: "hire", m: "고용하다", n: ["We need to ___ more staff.|우리는 직원을 더 ___해야 합니다.","They will ___ him soon.|그들은 곧 그를 ___할 것입니다.","Ready to ___ new talent.|새로운 인재를 ___할 준비 완료.","Who should we ___ next?|다음에 누구를 ___해야 할까요?","The company is ___ing.|회사가 ___ 중입니다.","___ a consultant for help.|도움을 위해 고문을 ___하세요.","They decided not to ___ him.|그들은 그를 ___하지 않기로 했습니다."], h: ["The firm’s expansion into the European market has prompted the management to ___ dozens of local sales representatives who are fluent in multiple languages.|회사의 유럽 시장 확장은 경영진으로 하여금 여러 언어에 능숙한 수십 명의 현지 영업 사원들을 ___하도록 촉발했습니다."] },
-{ w: "training", m: "교육, 훈련", n: ["Safety ___ is mandatory.|안전 ___은 의무입니다.","The ___ session starts now.|___ 세션이 지금 시작됩니다.","New employee ___ program.|신입 사원 ___ 프로그램.","Hands-on ___ is best.|실습 ___이 최고입니다.","Complete your ___ online.|온라인으로 ___을 완료하세요.","A week of intensive ___.|일주일간의 집중 ___.","___ for the marathon.|마라톤을 위한 ___."], h: ["The IT department will provide specialized cybersecurity ___ to all administrative staff members in order to minimize the risk of data breaches caused by phishing attempts.|IT 부서는 피싱 시도로 인한 데이터 유출 위험을 최소화하기 위해 모든 행정 직원에게 전문적인 사이버 보안 ___을 제공할 것입니다."] },
-{ w: "reference", m: "추천서; 참고", n: ["Provide a professional ___.|전문적인 ___를 제공하세요.","Check the ___ list.|___ 목록을 확인하세요.","Use this for future ___.|나중에 ___할 때 이것을 쓰세요.","A letter of ___.|___ 한 장.","The book is for ___.|그 책은 ___용입니다.","Need a solid ___.|확실한 ___가 필요합니다.","Check his ___s.|그의 ___들을 확인하세요."], h: ["Applicants are required to submit at least three letters of ___ from previous employers who can vouch for their technical expertise and work ethic.|지원자들은 자신의 기술적 전문성과 직업 윤리를 보증해 줄 수 있는 이전 고용주로부터 최소 세 장의 ___를 제출해야 합니다."] },
-{ w: "position", m: "일자리, 직책, 두다", n: ["A vacant ___ in sales.|영업부의 빈 ___.","What is your current ___?|현재 ___은 무엇입니까?","Apply for the manager ___.|매니저 ___에 지원하세요.","___ the table here.|테이블을 여기에 ___.","A high ___ in the firm.|회사의 높은 ___.","Which ___ do you prefer?|어떤 ___을 선호하나요?","Changing my ___ now.|지금 내 ___을 변경하는 중."], h: ["She has been promoted to a senior executive ___, where she will be responsible for overseeing the company's long-term strategic planning and international partnerships.|그녀는 수석 임원 ___으로 승진했으며, 그곳에서 회사의 장기적인 전략 계획과 국제 파트너십을 감독하는 책임을 맡게 될 것입니다."] },
-{ w: "achievement", m: "성취, 달성", n: ["A great ___.|위대한 ___.","Recognize her ___s.|그녀의 ___들을 인정하세요.","Lifelong ___ award.|평생 ___ 상.","The ___ of the goal.|목표의 ___.","Academic ___ is important.|학업적 ___은 중요합니다.","Proud of his ___s.|그의 ___들이 자랑스럽습니다.","Sense of ___ after work.|일 마친 후의 ___감."], h: ["The successful implementation of the new software system across all global branches was hailed as the most significant technical ___ of the decade for the company.|전 세계 모든 지사에 새로운 소프트웨어 시스템을 성공적으로 구현한 것은 회사에 있어 지난 10년 동안 가장 중요한 기술적 ___으로 칭송받았습니다."] },
-{ w: "impressed", m: "인상 깊게 생각하는, 감명을 받은", n: ["I was ___ by him.|나는 그에게 ___ 받았습니다.","Are you ___?|___ 받았나요?","The boss was ___|사장은 ___ 받았습니다.","___ with the service.|서비스에 ___ 받음.","Deeply ___ by the movie.|영화에 깊이 ___ 받음.","The judges were ___.|심사위원들이 ___ 받았습니다.","Highly ___ with the result.|결과에 매우 ___ 받음."], h: ["The potential investors were thoroughly ___ by the startup's innovative business model and the CEO's compelling vision for the future of sustainable energy.|잠재적 투자자들은 스타트업의 혁신적인 비즈니스 모델과 지속 가능한 에너지의 미래에 대한 CEO의 설득력 있는 비전에 철저히 ___ 받았습니다."] },
-{ w: "excellent", m: "훌륭한, 탁월한", n: ["___ customer service.|___ 고객 서비스.","An ___ choice.|___ 선택.","The food was ___.|음식이 ___했습니다.","Maintain ___ health.|___ 건강을 유지하세요.","___ communication skills.|___ 의사소통 능력.","An ___ opportunity.|___ 기회.","Results are ___.|결과가 ___합니다."], h: ["Owing to her ___ performance in the sales department, she was selected to represent the company at the upcoming international trade convention in Geneva.|영업 부서에서의 ___ 실적 덕분에, 그녀는 다가오는 제네바 국제 무역 박람회에서 회사를 대표할 인물로 선정되었습니다."] },
-{ w: "eligible", m: "자격이 있는, 적격의", n: ["Are you ___?|___입니까?","___ for the discount.|할인 ___.","Not ___ to apply.|지원 ___이 안 됨.","___ for health insurance.|건강보험 ___.","Check if you are ___.|___인지 확인하세요.","Only ___ staff can join.|___ 직원만 가입 가능.","The ___ candidates.|___ 후보자들."], h: ["Employees who have served the company for more than five consecutive years are automatically ___ for the enhanced retirement benefit package and additional stock options.|5년 이상 연속으로 회사에 근무한 직원들은 강화된 퇴직금 패키지와 추가 주식 매수 선택권(스톡옵션)을 받을 ___이 자동으로 주어집니다."] },
-{ w: "identify", m: "알아보다, 확인하다", n: ["___ the problem.|문제를 ___하세요.","Can you ___ this?|이것을 ___할 수 있나요?","___ the source.|출처를 ___하세요.","The system will ___ you.|시스템이 당신을 ___할 것입니다.","Need to ___ the cause.|원인을 ___해야 합니다.","___ the suspect.|용의자를 ___하세요.","Use IDs to ___.|___하기 위해 ID를 쓰세요."], h: ["Market researchers are using advanced data analytics to ___ emerging consumer trends and predict how they will impact the retail industry over the next decade.|시장 조사원들은 새로운 소비자 트렌드를 ___하고 그것들이 향후 10년 동안 소매 산업에 어떤 영향을 미칠지 예측하기 위해 고급 데이터 분석을 사용하고 있습니다."] },
-{ w: "associate", m: "관련시키다", n: ["___ A with B.|A를 B와 ___세요.","Don't ___ with them.|그들과 ___지 마세요.","Commonly ___d with risk.|흔히 위험과 ___됨.","I ___ this with home.|나는 이것을 집과 ___ 생각합니다.","Are you ___d with him?|그와 ___ 있습니까?","Symptoms ___d with flu.|독감과 ___된 증상들.","Events ___d with the war.|전쟁과 ___된 사건들."], h: ["Psychologists often ___ chronic stress with a variety of physical health issues, emphasizing the importance of mental well-being in maintaining overall physical fitness.|심리학자들은 종종 만성 스트레스를 다양한 신체 건강 문제와 ___ 생각하며, 전반적인 신체 건강을 유지하는 데 있어 정신적 안녕의 중요성을 강조합니다."] },
-{ w: "condition", m: "조건", n: ["Working ___s are good.|근로 ___이 좋습니다.","Terms and ___s.|약관 및 ___.","In perfect ___.|완벽한 ___으로.","The ___ of the car.|차의 ___.","Weather ___s.|날씨 ___.","Critical ___ in the hospital.|병원의 위중한 ___.","A necessary ___ for peace.|평화를 위한 필수 ___."], h: ["Before signing the long-term lease agreement, it is crucial to inspect the current ___ of the property and ensure that all necessary repairs will be completed by the landlord.|장기 임대 계약에 서명하기 전에, 부동산의 현재 ___을 점검하고 필요한 모든 수리가 임대인에 의해 완료될 것인지 확인하는 것이 중요합니다."] },
-{ w: "employment", m: "고용", n: ["Full-time ___.|전일제 ___.","The ___ rate.|___률.","Terms of ___.|___ 조건.","Proof of ___.|___ 증명서.","Looking for ___.|___을 찾는 중.","Steady ___ is hard.|안정적인 ___은 어렵습니다.","AI and future ___.|AI와 미래의 ___."], h: ["The recent economic downturn has led to a significant decrease in the overall ___ rate, forcing the government to implement new job creation initiatives and social welfare programs.|최근의 경기 침체는 전반적인 ___률의 상당한 감소를 초래하여, 정부로 하여금 새로운 일자리 창출 계획과 사회 복지 프로그램을 시행하게 만들었습니다."] },
-{ w: "lack", m: "~이 없다", n: ["___ of money.|돈 ___.","They ___ experience.|그들은 경험이 ___합니다.","A ___ of time.|시간 ___.","___ of communication.|소통 ___.","The project ___s funds.|프로젝트에 자금이 ___합니다.","A clear ___ of leadership.|리더십의 명확한 ___.","___ing confidence.|자신감이 ___함."], h: ["Despite their innovative ideas, many startups eventually fail because they ___ the necessary capital to scale their operations and compete effectively with established corporations.|혁신적인 아이디어에도 불구하고, 많은 스타트업이 사업 규모를 확장하고 기존 기업들과 효과적으로 경쟁하는 데 필요한 자본이 ___하기 때문에 결국 실패합니다."] },
-{ w: "managerial", m: "관리의", n: ["___ experience.|___ 경험.","A ___ position.|___ 직책.","Strong ___ skills.|강력한 ___ 능력.","___ roles in the firm.|회사의 ___ 역할.","Effective ___ style.|효과적인 ___ 스타일.","___ level staff.|___급 직원.","Handle ___ tasks.|___ 업무를 처리하세요."], h: ["Candidates applying for the regional director position must demonstrate exceptional ___ competence, including the ability to oversee diverse teams and manage multimillion-dollar budgets.|지역 이사 직책에 지원하는 후보자들은 다양한 팀을 감독하고 수백만 달러의 예산을 관리하는 능력을 포함하여 뛰어난 ___ 역량을 입증해야 합니다."] },
-{ w: "diligent", m: "성실한", n: ["A ___ worker.|___ 노동자.","Be ___ in your study.|공부에 ___하세요.","He is very ___.|그는 매우 ___합니다.","Success needs ___ effort.|성공은 ___한 노력이 필요합니다.","She is ___ and kind.|그녀는 ___하고 친절합니다.","___ students win.|___한 학생들이 이깁니다.","A ___ search for truth.|진실에 대한 ___한 탐구."], h: ["The manager noticed that the most ___ employees were not necessarily the most naturally talented, but rather those who consistently applied themselves to their tasks with unwavering focus.|매니저는 가장 ___한 직원들이 반드시 타고난 재능이 가장 뛰어난 사람들이 아니라, 오히려 흔들리지 않는 집중력으로 자신의 업무에 꾸준히 전념하는 사람들이라는 점을 알아차렸습니다."] },
-{ w: "familiar", m: "익숙한, 친숙한", n: ["Are you ___ with this?|이것에 ___합니까?","A ___ face.|___ 얼굴.","Sounds ___ to me.|나에게 ___하게 들립니다.","The city is ___.|그 도시는 ___합니다.","___ with the rules.|규칙에 ___함.","Become ___ with AI.|AI에 ___해지세요.","Looking for a ___ place.|___한 장소를 찾는 중."], h: ["New expatriate employees often attend cultural orientation sessions to become more ___ with local customs, business etiquette, and social norms before starting their assignments.|새로운 해외 파견 직원들은 업무를 시작하기 전에 현지 관습, 비즈니스 에티켓, 그리고 사회적 규범에 더 ___해지기 위해 종종 문화 오리엔테이션 세션에 참석합니다."] },
-{ w: "proficiency", m: "숙달, 능숙", n: ["English ___.|영어 ___.","High ___ in Excel.|엑셀에 대한 높은 ___.","Measure your ___.|당신의 ___를 측정하세요.","___ in coding.|코딩의 ___.","A ___ test.|___ 테스트.","Improve your ___.|당신의 ___를 향상시키세요.","Reach a level of ___.|___ 단계에 도달하세요."], h: ["To be considered for the senior translation position, applicants must demonstrate a near-native level of ___ in at least three different European languages, including French and German.|수석 번역직에 고려되기 위해서, 지원자들은 프랑스어와 독일어를 포함하여 최소 세 가지의 다른 유럽 언어에서 거의 원어민 수준의 ___를 입증해야 합니다."] },
-{ w: "prospective", m: "장래의, 미래의", n: ["___ buyers.|___ 구매자들.","___ employees.|___ 직원(지원자)들.","A ___ client.|___ 고객.","Interview ___ students.|___ 학생들을 인터뷰하세요.","Target ___ voters.|___ 투표자들을 타겟팅하세요.","Analyze ___ growth.|___ 성장을 분석하세요.","Meeting with a ___ partner.|___ 파트너와의 회의."], h: ["The university's recruitment office is organizing a series of webinars to provide ___ international students with detailed information regarding scholarship opportunities and visa requirements.|대학교 입학처는 ___ 외국인 유학생들에게 장학금 기회와 비자 요건에 관한 자세한 정보를 제공하기 위해 일련의 웨비나를 조직하고 있습니다."] },
-{ w: "appeal", m: "관심을 끌다, 매력적이다", n: ["___ to young people.|젊은이들에게 ___하다.","A broad ___.|넓은 ___.","The idea doesn't ___.|그 아이디어는 ___지 않습니다.","___ for help.|도움을 ___(호소)하다.","Emotional ___.|감정적 ___(호소).","Does this design ___?|이 디자인이 ___나요?","Visual ___ is key.|시각적 ___이 핵심입니다."], h: ["Luxury automobile manufacturers often focus on sophisticated aesthetics and cutting-edge technology to ___ to high-net-worth individuals who value both status and performance.|호화 자동차 제조업체들은 지위와 성능을 모두 중시하는 고액 자산가들에게 ___하기 위해 종종 정교한 미학과 최첨단 기술에 집중합니다."] },
-{ w: "specialize", m: "~을 전공하다, 전문적으로 다루다", n: ["___ in law.|법을 ___하다.","We ___ in AI.|우리는 AI를 ___ 다룹니다.","A shop that ___s in coffee.|커피를 ___ 하는 가게.","Which field do you ___ in?|어떤 분야를 ___ 하나요?","___d equipment.|___된 장비.","They ___ in repairs.|그들은 수리를 ___ 합니다.","___ in marketing.|마케팅을 ___ 하다."], h: ["Rather than offering a wide range of general legal services, this boutique law firm has chosen to ___ exclusively in intellectual property rights and patent litigation.|광범위한 일반 법률 서비스를 제공하기보다는, 이 부티크 로펌은 지적 재산권과 특허 소송만을 전적으로 ___ 하기로 선택했습니다."] },
-{ w: "apprehensive", m: "걱정하는, 염려하는", n: ["I feel ___ about the exam.|시험이 ___됩니다.","___ parents.|___하는 부모님.","The staff is ___.|직원들이 ___하고 있습니다.","___ about the change.|변화에 대해 ___함.","Look ___.|___해 보이다.","Deeply ___ about the future.|미래에 대해 깊이 ___함.","A bit ___ at first.|처음에는 약간 ___됨."], h: ["Many employees remain ___ about the integration of artificial intelligence into the workplace, fearing that automation might eventually lead to significant job displacement within the industry.|많은 직원이 자동화가 결국 업계 내 대규모 일자리 대체로 이어질 것을 두려워하며, 작업장에 인공지능이 통합되는 것에 대해 여전히 ___하고 있습니다."] },
-{ w: "consultant", m: "고문", n: ["Hire a tax ___.|세무 ___를 고용하세요.","Work as a ___.|___로 일하세요.","Ask a management ___.|경영 ___에게 물어보세요.","A financial ___.|재무 ___.","The ___'s report.|___의 보고서.","He is our head ___.|그는 우리의 수석 ___입니다.","Need an external ___.|외부 ___가 필요합니다."], h: ["The board of directors has decided to engage a specialized environmental ___ to conduct a thorough audit of the company's carbon footprint and recommend sustainable practices.|이사회는 회사의 탄소 발자국에 대한 철저한 감사를 실시하고 지속 가능한 관행을 권고하기 위해 전문 환경 ___를 고용하기로 결정했습니다."] },
-{ w: "entitle", m: "자격을 주다", n: ["___ you to a refund.|환불 ___를 주다.","Who is ___d?|누가 ___이 있습니까?","You are ___d to vote.|당신은 투표할 ___이 있습니다.","The coupon ___s you to a gift.|쿠폰은 당신에게 선물을 받을 ___를 줍니다.","___d to a break.|쉴 ___이 있음.","Everyone is ___d.|모두가 ___이 있습니다.","The book is ___d 'AI'.|그 책의 제목은 'AI'입니다."], h: ["Under the current labor laws, employees who work more than forty hours per week are legally ___d to receive overtime compensation at a rate of one and a half times their regular hourly wage.|현행 노동법에 따라, 주당 40시간 이상 근무하는 직원들은 정규 시간당 임금의 1.5배 비율로 초과 근무 수당을 받을 법적 ___이 있습니다."] },
-{ w: "degree", m: "학위", n: ["A master's ___.|석사 ___.","Earn a ___ in business.|경영학 ___를 따세요.","What's your ___?|당신의 ___은 무엇입니까?","90 ___ angle.|90___ 각도.","A high ___ of risk.|높은 ___의 위험.","First ___ burns.|1___ 화상.","Bachelor's ___ required.|학사 ___ 필요."], h: ["While practical experience is highly valued in the tech industry, many high-level managerial positions still require applicants to possess a graduate ___ from an accredited institution.|기술 산업에서 실무 경험이 높게 평가되지만, 많은 고위 관리직은 여전히 지원자가 공인된 기관의 대학원 ___를 소지할 것을 요구합니다."] },
-{ w: "payroll", m: "임금 대장, 급료 명부", n: ["500 staff on the ___.|___에 500명의 직원.","The ___ department.|___ 부서.","Calculate the ___.|___을 계산하세요.","Check the ___ records.|___ 기록을 확인하세요.","Weekly ___ processing.|주간 ___ 처리.","Added to the ___.|___에 추가됨.","Errors in the ___.|___의 오류."], h: ["The accounting department is currently implementing a new automated system designed to streamline the monthly ___ process and ensure the accurate calculation of taxes and benefits.|회계 부서는 현재 월간 ___ 프로세스를 간소화하고 세금 및 혜택의 정확한 계산을 보장하기 위해 설계된 새로운 자동화 시스템을 도입하고 있습니다."] },
-{ w: "recruit", m: "(신입 사원 등을) 모집하다", n: ["___ new members.|새 멤버를 ___하세요.","Ready to ___ engineers.|엔지니어를 ___할 준비 완료.","They ___ top talent.|그들은 최고의 인재를 ___합니다.","___ for the army.|군대를 위해 ___하다.","Hard to ___ nurses.|간호사를 ___하기 어렵습니다.","___ing online.|온라인으로 ___ 중.","A new ___ joined.|새로운 ___가 합류했습니다."], h: ["To support its ambitious global expansion strategy, the multinational corporation plans to ___ over five hundred software developers from top-tier universities over the next two years.|야심 찬 글로벌 확장 전략을 지원하기 위해, 그 다국적 기업은 향후 2년 동안 일류 대학교에서 500명 이상의 소프트웨어 개발자를 ___할 계획입니다."] },
-{ w: "certification", m: "증명서, 증명", n: ["Get a teaching ___.|교사 ___을 따세요.","Professional ___ is key.|전문 ___이 핵심입니다.","ISO ___ list.|ISO ___ 목록.","Safety ___ required.|안전 ___ 필요.","Renew your ___.|당신의 ___을 갱신하세요.","___ of origin.|원산지 ___.","Pass the ___ test.|___ 테스트를 통과하세요."], h: ["In order to legally operate heavy industrial machinery on the construction site, workers must obtain a specialized safety ___ issued by the national vocational training board.|건설 현장에서 중공업 기계를 법적으로 조작하기 위해, 노동자들은 국가 직업 훈련 위원회에서 발행한 전문 안전 ___을 취득해야 합니다."] },
-{ w: "occupation", m: "직업", n: ["State your name and ___.|이름과 ___을 말하세요.","Looking for a new ___.|새로운 ___을 찾는 중.","Current ___: student.|현재 ___: 학생.","A dangerous ___.|위험한 ___.","What is your main ___?|당신의 주요 ___은 무엇입니까?","Choose your ___ wisely.|___을 현명하게 선택하세요.","Change of ___.|___의 변경."], h: ["Sociologists have observed that the prestige associated with a particular ___ can fluctuate significantly over time due to shifts in societal values and technological advancements.|사회학자들은 특정 ___과 관련된 위신이 사회적 가치의 변화와 기술적 발전으로 인해 시간이 지남에 따라 상당히 변동할 수 있다는 점을 관찰해 왔습니다."] },
-{ w: "wage", m: "임금, 급료", n: ["Minimum ___ increase.|최저 ___ 인상.","Daily ___ payment.|일일 ___ 지급.","Calculate the ___.|___을 계산하세요.","Low ___ workers.|저___ 노동자들.","Demanding higher ___s.|더 높은 ___을 요구함.","Average hourly ___.|평균 시간당 ___.","The gap in ___s.|___의 격차."], h: ["Despite the company's record-breaking profits last quarter, many labor unions are still threatening to strike if the management refuses to grant a substantial increase in the hourly ___ for entry-level workers.|지난 분기 회사의 기록적인 이익에도 불구하고, 많은 노동조합은 경영진이 초급 근로자들의 시간당 ___을 실질적으로 인상하는 것을 거부할 경우 여전히 파업하겠다고 위협하고 있습니다."] }
-]};
-
-const allWordsGlobal = [];
-Object.values(dayData).forEach(arr => arr.forEach(item => allWordsGlobal.push(item.w)));
-let currentCorrectCount = parseInt(localStorage.getItem('toeic_correct')) || 0;
-let totalSolvedCount = parseInt(localStorage.getItem('toeic_total')) || 0;
-let unlockedDay = parseInt(localStorage.getItem('toeic_unlocked_day')) || 1;
-let mistakes = JSON.parse(localStorage.getItem('toeic_mistakes')) || [];
-let currentWord = null; let currentDiff = 'easy'; let currentSelectedDay = 1;
-let testScore = 0; let testStep = 0; let isTestMode = false;
-let timerInterval = null; let timeLimit = 0; let timeRemaining = 0; let isPaused = false;
-
-function saveProgress() { localStorage.setItem('toeic_correct', currentCorrectCount); localStorage.setItem('toeic_total', totalSolvedCount); localStorage.setItem('toeic_unlocked_day', unlockedDay); localStorage.setItem('toeic_mistakes', JSON.stringify(mistakes)); }
-function updateHomeStats() { document.getElementById('stat-correct').innerText = currentCorrectCount; document.getElementById('stat-total').innerText = totalSolvedCount; }
-function goHome() { clearInterval(timerInterval); updateHomeStats(); switchView('#home'); }
-function showDaySelect(target) {
-    const container = document.getElementById('day-buttons'); const title = document.getElementById('day-select-title'); container.innerHTML = '';
-    title.innerText = target === 'quiz' ? '학습 차수 선택' : '단어장 차수 선택';
-    for(let i=1; i<=1; i++) { // 현재 DAY 1만 데이터 있음
-        const btn = document.createElement('button'); btn.className = 'day-btn'; btn.innerText = 'DAY ' + i;
-        btn.onclick = () => { currentSelectedDay = i; if(target === 'quiz') { document.getElementById('selected-day-title').innerText = 'DAY ' + i; switchView('#mode-select'); } else { showVocaList(i); } };
-        container.appendChild(btn);
-    }
-    switchView('#day-select');
-}
-function startQuiz(diff) { isTestMode = false; currentDiff = diff; document.getElementById('test-progress').style.display = 'none'; switchView('#quiz'); generateQuestion(); }
-function startTest() { if(!confirm("HARD 10문제가 출제됩니다.")) return; isTestMode = true; testScore = 0; testStep = 0; document.getElementById('test-progress').style.display = 'block'; switchView('#quiz'); generateQuestion(); }
-function generateQuestion() {
-    clearInterval(timerInterval); isPaused = false; document.getElementById('pause-overlay').style.display = 'none'; document.getElementById('explanation').style.display = 'none'; document.getElementById('next-btn').style.display = 'none'; document.getElementById('timer-cont').style.display = 'block';
-    const words = dayData[currentSelectedDay];
-    if(isTestMode) { testStep++; if(testStep > 10) { finishTest(); return; } document.getElementById('test-progress').innerText = `테스트: ${testStep} / 10`; }
-    currentWord = words[Math.floor(Math.random() * words.length)];
-    if (isTestMode || currentDiff === 'hard') timeLimit = 60; else if (currentDiff === 'normal') timeLimit = 30; else timeLimit = 10;
-    timeRemaining = timeLimit; updateTimerBar();
-    let qText = "";
-    if (isTestMode || currentDiff === 'hard') qText = `[💀 HARD - 60s]\n"${currentWord.h[0].split('|')[0]}"`;
-    else if (currentDiff === 'normal') { const nIdx = Math.floor(Math.random() * currentWord.n.length); const p = currentWord.n[nIdx].split('|'); qText = `[NORMAL - 30s]\n"${p[0]}"\n(${p[1]})`; }
-    else qText = `[EASY - 10s]\n뜻: ${currentWord.m}`;
-    document.getElementById('q-text').innerText = qText;
-    let options = [currentWord.w]; while(options.length < 4) { let rand = allWordsGlobal[Math.floor(Math.random() * allWordsGlobal.length)]; if(!options.includes(rand)) options.push(rand); }
-    options.sort(() => Math.random() - 0.5);
-    const optionsDiv = document.getElementById('options'); optionsDiv.innerHTML = '';
-    options.forEach((opt, index) => { const btn = document.createElement('button'); btn.className = 'option'; btn.innerText = `${index + 1}. ${opt}`; btn.onclick = () => checkAnswer(btn, opt); optionsDiv.appendChild(btn); });
-    startTimer();
-}
-function startTimer() { timerInterval = setInterval(() => { if (!isPaused) { timeRemaining -= 0.1; updateTimerBar(); if (timeRemaining <= 0) { clearInterval(timerInterval); checkAnswer(null, 'TIMEOUT'); } } }, 100); }
-function updateTimerBar() { document.getElementById('timer-bar').style.width = (timeRemaining / timeLimit) * 100 + "%"; }
-function togglePause() { isPaused = !isPaused; document.getElementById('pause-overlay').style.display = isPaused ? 'flex' : 'none'; }
-function checkAnswer(btn, selected) {
-    clearInterval(timerInterval); const btns = document.querySelectorAll('.option'); if (btns.length === 0 || btns[0].disabled) return;
-    btns.forEach(b => b.disabled = true); totalSolvedCount++;
-    const isCorrect = selected === currentWord.w; const expDiv = document.getElementById('explanation'); expDiv.style.display = 'block'; document.getElementById('next-btn').style.display = 'block';
-    if (isCorrect) { if(btn) btn.classList.add('correct'); currentCorrectCount++; if(isTestMode) testScore += 10; expDiv.innerText = `정답! [${currentWord.w}: ${currentWord.m}]`; }
-    else { if(btn && selected !== 'TIMEOUT') btn.classList.add('incorrect'); btns.forEach(b => { if(b.innerText.split(". ")[1] === currentWord.w) b.classList.add('correct'); });
-        expDiv.innerText = (selected === 'TIMEOUT' ? "시간 초과! " : "오답! ") + `정답: '${currentWord.w}' [${currentWord.m}]`;
-        if(!mistakes.find(m => m.w === currentWord.w)) mistakes.push({w: currentWord.w, m: currentWord.m, s: currentWord.n[0].split('|')[0]});
-    } saveProgress();
-}
-function finishTest() { alert(`점수: ${testScore}점`); if(testScore >= 90 && unlockedDay < 30) unlockedDay++; saveProgress(); goHome(); }
-function showReview() {
-    switchView('#list-view'); document.getElementById('list-title').innerText = "오답 노트";
-    const content = document.getElementById('list-content'); content.innerHTML = mistakes.length === 0 ? "없음" : "";
-    mistakes.forEach(m => { content.innerHTML += `<div class="list-item"><button class="del-btn" onclick="deleteMistake('${m.w}')">삭제</button><div style="font-size:18px; color:#3b5bdb; font-weight:bold">${m.w} (${m.m})</div><div style="margin-top:8px;">${m.s}</div></div>`; });
-}
-function showVocaList(day) {
-    switchView('#list-view'); document.getElementById('list-title').innerText = `DAY ${day} 단어장`;
-    const content = document.getElementById('list-content'); content.innerHTML = "";
-    [...dayData[day]].sort((a,b)=>a.w.localeCompare(b.w)).forEach(w => { content.innerHTML += `<div class="list-item"><div style="font-size:18px; color:#3b5bdb; font-weight:bold">${w.w}</div><div style="color:#fff;">뜻: ${w.m}</div></div>`; });
-}
-function deleteMistake(word) { mistakes = mistakes.filter(m => m.w !== word); saveProgress(); showReview(); }
-function resetAllProgress() { if(confirm("초기화?")) { localStorage.clear(); location.reload(); } }
-function switchView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view')); document.querySelector(id).classList.add('active-view'); }
-window.addEventListener('keydown', (e) => {
-    if (!document.getElementById('quiz').classList.contains('active-view') || (isPaused && e.key !== ' ')) return;
-    if (['1','2','3','4'].includes(e.key)) { const idx = parseInt(e.key)-1; const opts = document.querySelectorAll('.option'); if (opts[idx] && !opts[idx].disabled) opts[idx].click(); }
-    if (e.key === 'Enter' && document.getElementById('next-btn').style.display !== 'none') document.getElementById('next-btn').click();
-    if (e.key === ' ') { e.preventDefault(); togglePause(); }
-});
-updateHomeStats();
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
