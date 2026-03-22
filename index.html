@@ -6,20 +6,25 @@
 <style>
 :root { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --primary: #3b5bdb; --secondary: #2b8a3e; --accent: #ffd43b; --error: #c92a2a; }
 body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
-.container { width: 100%; max-width: 600px; padding: 20px; }
-.card { background: var(--card); padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
+/* 전체 컨테이너 크기 확장 */
+.container { width: 100%; max-width: 800px; padding: 20px; }
+.card { background: var(--card); padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
 .view { display: none; animation: fadeIn 0.3s ease; }
 .active-view { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; background: #2a2a2a; padding: 15px; border-radius: 12px; }
-.btn { display: block; width: 100%; padding: 16px; margin: 10px 0; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; color: white; background: var(--primary); }
+/* 통계창 및 텍스트 강조 */
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; background: #2a2a2a; padding: 20px; border-radius: 12px; font-weight: bold; font-size: 1.1em; }
+.btn { display: block; width: 100%; padding: 20px; margin: 10px 0; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s; color: white; background: var(--primary); }
 .btn:hover { opacity: 0.9; transform: scale(1.01); }
-.option { display: block; width: 100%; padding: 15px; margin: 10px 0; text-align: left; background: #2a2a2a; border: 1px solid #444; color: var(--text); border-radius: 8px; cursor: pointer; }
+/* 선택지 스타일 및 굵기 추가 */
+.option { display: block; width: 100%; padding: 20px; margin: 12px 0; text-align: left; background: #2a2a2a; border: 1px solid #444; color: var(--text); border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; }
 .option.correct { background: #1b5e20; border-color: #4caf50; color: #a5d6a7; }
 .option.incorrect { background: #b71c1c; border-color: #f44336; color: #ef9a9a; }
-.explanation { margin-top: 20px; padding: 15px; background: #2a2a2a; border-left: 4px solid var(--primary); text-align: left; display: none; line-height: 1.6; }
-.q-text { font-size: 1.2em; text-align: left; margin-bottom: 20px; line-height: 1.5; }
-.mistake-item { background: #2a2a2a; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--error); text-align: left; }
+.explanation { margin-top: 25px; padding: 20px; background: #2a2a2a; border-left: 5px solid var(--primary); text-align: left; display: none; line-height: 1.6; font-weight: bold; font-size: 1.1em; }
+.q-text { font-size: 1.4em; text-align: left; margin-bottom: 30px; line-height: 1.6; font-weight: bold; color: #ffffff; }
+.mistake-item { background: #2a2a2a; padding: 20px; border-radius: 8px; margin-bottom: 12px; border-left: 5px solid var(--error); text-align: left; position: relative; }
+.del-btn { position: absolute; right: 15px; top: 15px; background: #444; color: #fff; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 14px; font-weight: bold; }
+h1 { font-size: 2.5em; font-weight: 900; }
 </style>
 </head>
 <body>
@@ -37,18 +42,18 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; background: va
     </div>
 
     <div id="quiz" class="view card">
-        <div style="display:flex; gap:10px; margin-bottom:20px;">
-            <button class="btn" style="margin:0; background:#f08c00" onclick="alert('일시정지! 확인 시 재개')">일시정지</button>
+        <div style="display:flex; gap:10px; margin-bottom:25px;">
+            <button class="btn" style="margin:0; background:#f08c00; color:#000;" onclick="alert('일시정지! 확인 시 재개')">일시정지</button>
             <button class="btn" style="margin:0; background:#c92a2a" onclick="goHome()">그만하기</button>
         </div>
         <div id="q-text" class="q-text"></div>
         <div id="options"></div>
         <div id="explanation" class="explanation"></div>
-        <button id="next-btn" class="btn" style="display:none" onclick="generateQuestion()">다음 문제</button>
+        <button id="next-btn" class="btn" style="display:none; background: var(--secondary);" onclick="generateQuestion()">다음 문제 (Enter)</button>
     </div>
 
     <div id="review" class="view card">
-        <h2>오답 노트</h2>
+        <h2 style="font-weight: 900;">오답 노트</h2>
         <div id="mistake-list"></div>
         <button class="btn" onclick="goHome()">메인으로</button>
     </div>
@@ -74,7 +79,7 @@ const words = [
 { w: "achievement", m: "성취, 달성, 업적", n: ["우리 팀의 가장 큰 ___은 매출 증가입니다.", "노벨상은 평생의 ___을 기리는 상입니다.", "이력서에 과거 ___ 기록을 수치로 적으세요.", "완주는 나에게 엄청난 ___감을 안겨주었습니다.", "달 착륙은 인류의 가장 놀라운 ___ 중 하나입니다."], h: ["노력 끝에 얻어낸 훌륭한 성과나 실적은?", "성공적으로 과업을 완수한 결과물을 뜻하는 명사는?", "에이(A)로 시작하며 '달성'을 뜻하는 단어는?", "학습 수준이나 성취 정도를 나타내는 명사는?", "이력서에서 가장 강조해야 할 실적 항목 명사는?"] },
 { w: "impressed", m: "인상 깊은, 감명받은", n: ["면접관은 지원자의 실력에 매우 ___ 상태였습니다.", "나는 레스토랑의 서비스에 완전히 ___했습니다.", "고객은 신속한 해결 방식에 크게 ___하셨습니다.", "자원봉사 이야기는 참석자를 ___하게 만들었습니다.", "사장은 신입의 아이디어에 몹시 ___한 눈치입니다."], h: ["깊은 인상을 받은 심리 상태를 나타내는 형용사는?", "상대에게 감탄하여 좋은 평가를 내린 상태는?", "아이(I)로 시작하며 수동태로 자주 쓰이는 단어는?", "훌륭함에 압도되어 마음이 움직인 상태는?", "감동을 받은 주체의 감정을 묘사하는 형용사는?"] },
 { w: "excellent", m: "훌륭한, 탁월한", n: ["그녀의 ___ 리더십이 성공을 이끌었습니다.", "이 호텔은 최상급 시설과 ___ 서비스를 자랑합니다.", "그의 발표는 전달력이 매우 ___했습니다.", "영어와 중국어에 ___ 능력을 갖춘 인재를 찾습니다.", "식당의 스테이크 맛은 정말 ___이었습니다."], h: ["보통 수준을 훨씬 뛰어넘는 훌륭함을 뜻하는 단어는?", "품질이나 태도가 나무랄 데 없이 탁월한 형용사는?", "최고 수준으로 우수함을 뜻하는 이(E) 시작 단어는?", "최우수 등급을 나타낼 때 자주 쓰이는 형용사는?", "완벽에 가깝게 뛰어난 상태를 의미하는 단어는?"] },
-{ w: "eligible", m: "자격 있는, 적격의", n: ["3년 이상 근무해야 승진 심사 ___이 생깁니다.", "소득 기준을 만족해야 보조금 ___ 상태가 됩니다.", "은퇴 연령 직원은 연금을 수령할 ___이 됩니다.", "이 쿠폰은 신규 가입자만 사용할 ___ 조건입니다.", "졸업생은 면허 시험에 응시할 ___이 주어집니다."], h: ["법적/제도적 권리가 주어졌음을 나타내는 단어는?", "혜택을 받을 자격이 있음을 뜻하는 이(E) 시작 단어는?", "수동태로 권리가 부여됨을 나타낼 때 쓰는 형용사는?", "어떤 지위를 누릴 합당한 요건을 갖춘 상태는?", "자격 요건을 충족한 적격자임을 나타내는 형용사는?"] },
+{ w: "eligible", m: "자격 있는, 적격의", n: ["3년 이상 근무해야 승진 심사 ___이 생깁니다.", "소득 기준을 만족해야 보조금 ___ 상태가 됩니다.", "은퇴 연령 직원은 연금을 수령할 ___이 됩니다.", "이 쿠폰은 신규 가입자만 사용할 ___ 조건입니다.", "졸업생은 면허 시험에 응시할 ___이 주어집니다."], h: ["법적/제도적 권리가 주어졌음을 나타내는 단어는?", "혜택을 받을 자격이 있음을 뜻하는 이(E) 시작 단어는?", "수동태로 '자격이 있다'를 뜻할 때 쓰는 형용사는?", "어떤 지위를 누릴 합당한 요건을 갖춘 상태는?", "자격 요건을 충족한 적격자임을 나타내는 형용사는?"] },
 { w: "identify", m: "알아보다, 확인하다", n: ["전문가는 매출 하락의 원인을 ___했습니다.", "경찰은 CCTV를 통해 신원을 ___했습니다.", "고객의 니즈를 정확히 ___하는 것이 중요합니다.", "보안 시스템은 지문을 ___하여 문을 엽니다.", "새로운 행성의 존재를 ___하는 데 성공했습니다."], h: ["정체를 알아내고 규명한다는 뜻의 동사는?", "아이디(ID)의 어원이 되는 확인하다라는 동사는?", "불분명한 사실을 명확히 파악하는 과학적 동사는?", "리스크 관리에서 위험을 찾아내는 핵심 동사는?", "위드(with)와 함께 쓰여 동일시하다는 뜻의 단어는?"] },
 { w: "associate", m: "관련시키다, 동료", n: ["소비자는 이 브랜드를 고급스러움과 ___합니다.", "행복했던 시절이 ___되어 떠오릅니다.", "정치인은 스캔들에 ___되어 있다는 의혹이 있습니다.", "건강 식단은 질병 감소와 ___되어 있습니다.", "해외 지사 ___들과 협력하여 진행합니다."], h: ["둘 이상의 개념을 결부시킨다는 뜻의 동사는?", "기억을 연상하고 연결 짓는다는 의미의 단어는?", "위드(with)와 함께 쓰여 '관련 있다'는 뜻의 단어는?", "명사로 쓰여 직장 동료나 파트너를 뜻하는 단어는?", "에이(A)로 시작하며 '연관시키다'라는 뜻의 단어는?"] },
 { w: "condition", m: "조건, 상태", n: ["계약서에 명시된 고용 ___을 확인하세요.", "건강 ___이 좋지 않아 회의에 불참합니다.", "중고차 엔진 ___이 매우 훌륭합니다.", "열악한 노동 ___을 개선하기 위해 파업합니다.", "정부는 보조금 지원을 위한 ___을 내걸었습니다."], h: ["계약 성립의 전제가 되는 조항이나 상태는?", "사람의 컨디션이나 사물의 현재 상태는?", "근로 환경이나 여건을 뜻하는 씨(C) 시작 단어는?", "화장품이나 헤어 관리에서 '조절하다'는 동사 뜻은?", "어떤 일이 이루어지기 위한 필수적 전제는?"] },
@@ -102,8 +107,11 @@ let currentDiff = 'easy';
 let currentCorrect = 0;
 let totalSolvedCount = 0;
 let currentWord = null;
-let mistakes = [];
-const allWordList = words.map(item => item.w);
+let mistakes = JSON.parse(localStorage.getItem('toeic_mistakes')) || [];
+
+function saveMistakes() {
+    localStorage.setItem('toeic_mistakes', JSON.stringify(mistakes));
+}
 
 function goHome() {
     switchView('#home');
@@ -144,10 +152,10 @@ function generateQuestion() {
 
     const optionsDiv = document.getElementById('options');
     optionsDiv.innerHTML = '';
-    options.forEach(opt => {
+    options.forEach((opt, index) => {
         const btn = document.createElement('button');
         btn.className = 'option';
-        btn.innerText = opt;
+        btn.innerText = (index + 1) + ". " + opt;
         btn.onclick = () => checkAnswer(btn, opt);
         optionsDiv.appendChild(btn);
     });
@@ -155,6 +163,8 @@ function generateQuestion() {
 
 function checkAnswer(btn, selected) {
     const btns = document.querySelectorAll('.option');
+    if (btns[0].disabled) return; // 이미 푼 경우 무시
+
     btns.forEach(b => b.disabled = true);
     totalSolvedCount++;
 
@@ -168,7 +178,9 @@ function checkAnswer(btn, selected) {
         expDiv.innerText = `정답입니다! [${currentWord.w}: ${currentWord.m}]`;
     } else {
         btn.classList.add('incorrect');
-        btns.forEach(b => { if(b.innerText === currentWord.w) b.classList.add('correct'); });
+        btns.forEach(b => { 
+            if(b.innerText.split(". ")[1] === currentWord.w) b.classList.add('correct'); 
+        });
         expDiv.innerText = `오답입니다. 정답은 '${currentWord.w}'입니다. [뜻: ${currentWord.m}]`;
         
         if(!mistakes.find(m => m.w === currentWord.w)) {
@@ -178,8 +190,19 @@ function checkAnswer(btn, selected) {
                 s: currentWord.n[0],
                 e: currentWord.h[0]
             });
+            saveMistakes();
         }
     }
+}
+
+function nextQuestion() {
+    generateQuestion();
+}
+
+function deleteMistake(word) {
+    mistakes = mistakes.filter(m => m.w !== word);
+    saveMistakes();
+    showReview();
 }
 
 function showReview() {
@@ -193,9 +216,10 @@ function showReview() {
     mistakes.forEach(m => {
         list.innerHTML += `
             <div class="mistake-item">
-                <div style="font-size:18px; color:#3b5bdb; font-weight:bold">${m.w} (${m.m})</div>
-                <div style="margin-top:5px">예시: ${m.s}</div>
-                <div style="color:#888; font-size:14px">힌트: ${m.e}</div>
+                <button class="del-btn" onclick="deleteMistake('${m.w}')">삭제</button>
+                <div style="font-size:20px; color:#3b5bdb; font-weight:bold">${m.w} (${m.m})</div>
+                <div style="margin-top:8px; font-weight:bold;">예시: ${m.s}</div>
+                <div style="color:#888; font-size:16px; font-weight:bold;">힌트: ${m.e}</div>
             </div>`;
     });
 }
@@ -204,6 +228,31 @@ function switchView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
     document.querySelector(id).classList.add('active-view');
 }
+
+// 키보드 이벤트 핸들러 추가
+window.addEventListener('keydown', (e) => {
+    const quizView = document.getElementById('quiz');
+    if (!quizView.classList.contains('active-view')) return;
+
+    const nextBtn = document.getElementById('next-btn');
+    const options = document.querySelectorAll('.option');
+
+    // 숫지키 1, 2, 3, 4 처리
+    if (['1', '2', '3', '4'].includes(e.key)) {
+        const index = parseInt(e.key) - 1;
+        if (options[index] && !options[index].disabled) {
+            options[index].click();
+        }
+    }
+
+    // 엔터키 다음 문제 처리
+    if (e.key === 'Enter' && nextBtn.style.display !== 'none') {
+        nextBtn.click();
+    }
+});
+
+// 초기 데이터 로드
+goHome();
 </script>
 </body>
 </html>
